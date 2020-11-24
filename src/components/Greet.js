@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
+import moment from "moment";
 
-import { DateRangePicker, SingleDatePicker, DayPickerRangeController } from 'react-dates';
+import { DateRangePicker } from 'react-dates';
 
 import {Button, Form, FormGroup, Input, Label,
-    Dropdown, DropdownToggle, DropdownMenu, DropdownItem,
     Modal, ModalHeader, ModalBody, ModalFooter}
     from "reactstrap";
 
@@ -21,18 +21,14 @@ class Greet extends Component{
             dropDownValue:'',
             selectValue:'',
             multiValue:'',
-            thisDate:'',
-            date:''
-
+            startDate: null,
+            endDate: null,
+            dateIs:'',
         }
     }
 
 
-    toggle = event => {
-        this.setState({
-            dropdownOpen: !this.state.dropdownOpen
-        });
-    }
+
 
     handleNameChange = event => {
         this.setState({
@@ -42,11 +38,6 @@ class Greet extends Component{
     handleEmailChange = event => {
         this.setState({
             email: event.target.value
-        })
-    }
-    handleDropDown = event => {
-        this.setState({
-            dropDownValue: event.currentTarget.textContent
         })
     }
     handleSelect = event => {
@@ -62,9 +53,16 @@ class Greet extends Component{
         })
     }
 
+    alertStartDate = (e) => {
+        alert(this.state.startDate)
+        this.setState({dateIs:this.state.startDate})
+        e.preventDefault()
+    };
+    alertEndDate = () => {alert(this.state.endDate)};
+
+
     toggleModal = event => {
         this.setState({
-            thisDate: this.state.date,
             modalIsOpen: ! this.state.modalIsOpen,
         })
         event.preventDefault()
@@ -94,21 +92,6 @@ class Greet extends Component{
                         placeholder="Email"/>
                 </FormGroup>
                 <FormGroup>
-                    <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
-                        <DropdownToggle caret>
-                            { this.state.dropDownValue }
-                        </DropdownToggle>
-                        <DropdownMenu>
-                            <DropdownItem header>Please stat your mind!</DropdownItem>
-                            <DropdownItem onClick={this.handleDropDown}>Are you happy?</DropdownItem>
-                            <DropdownItem onClick={this.handleDropDown} text>Are you sure?</DropdownItem>
-                            <DropdownItem onClick={this.handleDropDown} disabled>Do you want some candy? (disabled)</DropdownItem>
-                            <DropdownItem onClick={this.handleDropDown} divider />
-                            <DropdownItem onClick={this.handleDropDown}>Suit yourself</DropdownItem>
-                        </DropdownMenu>
-                    </Dropdown>
-                </FormGroup>
-                <FormGroup>
                     <Label for="exampleSelect">Select</Label>
                     <Input type="select" name="select" id="exampleSelect" onChange={this.handleSelect.bind(this)}>
                         <option>1</option>
@@ -119,25 +102,27 @@ class Greet extends Component{
                     </Input>
                 </FormGroup>
                 <FormGroup>
-                    <FormGroup>
-                        <Label for="exampleSelectMulti">Select Multiple</Label>
-                        <Input type="select" name="selectMulti" id="exampleSelectMulti" multiple onChange={this.handleMulti}>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-                            <option>5</option>
-                        </Input>
-                    </FormGroup>
+                    <Label for="exampleSelectMulti">Select Multiple</Label>
+                    <Input type="select" name="selectMulti" id="exampleSelectMulti" multiple onChange={this.handleMulti}>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                    </Input>
                 </FormGroup>
                 <FormGroup>
-                    <SingleDatePicker
-                        date={this.state.date} // momentPropTypes.momentObj or null
-                        onDateChange={date => this.setState({ date })} // PropTypes.func.isRequired
-                        focused={this.state.focused} // PropTypes.bool
-                        onFocusChange={({ focused }) => this.setState({ focused })} // PropTypes.func.isRequired
-                        id="your_unique_id" // PropTypes.string.isRequired,
+                    <DateRangePicker
+                        startDate={this.state.startDate}
+                        startDateId="your_unique_start_date_id"
+                        endDate={this.state.endDate}
+                        endDateId="your_unique_end_date_id"
+                        onDatesChange={({ startDate, endDate }) => this.setState({  startDate, endDate })}
+                        focusedInput={this.state.focusedInput}
+                        onFocusChange={focusedInput => this.setState({ focusedInput })}
                     />
+                    <button onClick={this.alertStartDate}>Click me for start date</button>
+                    <button onClick={this.alertEndDate}>Click me for end date</button>
                 </FormGroup>
                 <FormGroup>
                     <Button
@@ -145,7 +130,7 @@ class Greet extends Component{
                         className="btn-lg btn-dark btn-block">Submit</Button>
                 </FormGroup>
                 <div className="text-center pt-3">
-                    I hope you are proud of yourself. :-|
+                    I hope you are proud of yourself. :-| { this.state.dateIs }
                 </div>
 
                 <Modal isOpen={this.state.modalIsOpen}>
@@ -157,7 +142,7 @@ class Greet extends Component{
                         Dropdown: { this.state.dropDownValue } <br/>
                         Select Value: { this.state.selectValue } <br/>
                         Multi Select: { this.state.multiValue } <br/>
-                        Date: { this.date }
+                        Date: { this.state.startDate }
 
                     </ModalBody>
                     <ModalFooter>Good day!</ModalFooter>
