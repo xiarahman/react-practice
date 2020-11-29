@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
-import moment from "moment";
 
 import { DateRangePicker } from 'react-dates';
 
@@ -24,10 +23,50 @@ class Greet extends Component{
             startDate: null,
             endDate: null,
             dateIs:'',
+
+            nameError: "",
+            emailError:"",
+            selectValueError:"",
+            multiValueError:"",
+
         }
     }
 
 
+    validate = () => {
+        let nameError: "";
+        let emailError:"";
+        let selectValueError:"";
+        let multiValueError:"";
+
+        // name validation
+        if(!this.state.name){
+            nameError = "Name cannot be empty"
+            this.setState({nameError})
+            return false
+        }
+        // email validation
+        if(!this.state.email || !this.state.email.includes('@')){
+            emailError = "Invalid Email address"
+            this.setState({emailError})
+            return false
+        }
+        // select validation
+        if(!this.state.selectValue){
+            selectValueError = "No value selected"
+            this.setState({selectValueError})
+            return false
+        }
+        // multi value validation
+        if(!this.state.multiValue){
+            multiValueError = "No multi value selected"
+            this.setState({multiValueError})
+            return false
+        }
+
+        // else return true of valid
+        return true
+    }
 
 
     handleNameChange = event => {
@@ -62,9 +101,13 @@ class Greet extends Component{
 
 
     toggleModal = event => {
-        this.setState({
-            modalIsOpen: ! this.state.modalIsOpen,
-        })
+        const isValid = this.validate();
+        if(isValid){
+            console.log(this.state)
+            this.setState({
+                modalIsOpen: ! this.state.modalIsOpen,
+            })
+        }
         event.preventDefault()
     }
 
@@ -82,6 +125,9 @@ class Greet extends Component{
                         value={this.state.name}
                         onChange = {this.handleNameChange}
                         placeholder="Name"/>
+                    {this.state.nameError ? (
+                        <span className="text-danger">{this.state.nameError}</span>
+                    ):null}
                 </FormGroup>
                 <FormGroup>
                     <Label>Email</Label>
@@ -90,16 +136,23 @@ class Greet extends Component{
                         value = {this.state.email}
                         onChange = {this.handleEmailChange}
                         placeholder="Email"/>
+                    {this.state.emailError ? (
+                        <span className="text-danger">{this.state.emailError}</span>
+                    ):null}
                 </FormGroup>
                 <FormGroup>
                     <Label for="exampleSelect">Select</Label>
                     <Input type="select" name="select" id="exampleSelect" onChange={this.handleSelect.bind(this)}>
+                        <option>Please select a value</option>
                         <option>1</option>
                         <option>2</option>
                         <option>3</option>
                         <option>4</option>
                         <option>5</option>
                     </Input>
+                    {this.state.selectValueError ? (
+                        <span className="text-danger">{this.state.selectValueError}</span>
+                    ):null}
                 </FormGroup>
                 <FormGroup>
                     <Label for="exampleSelectMulti">Select Multiple</Label>
@@ -110,6 +163,9 @@ class Greet extends Component{
                         <option>4</option>
                         <option>5</option>
                     </Input>
+                    {this.state.multiValueError ? (
+                        <span className="text-danger">{this.state.multiValueError}</span>
+                    ):null}
                 </FormGroup>
                 <FormGroup>
                     <DateRangePicker
@@ -121,8 +177,9 @@ class Greet extends Component{
                         focusedInput={this.state.focusedInput}
                         onFocusChange={focusedInput => this.setState({ focusedInput })}
                     />
-                    <button onClick={this.alertStartDate}>Click me for start date</button>
-                    <button onClick={this.alertEndDate}>Click me for end date</button>
+
+                    <button onClick={this.alertStartDate}>Click start date</button>
+                    <button onClick={this.alertEndDate}>Click end date</button>
                 </FormGroup>
                 <FormGroup>
                     <Button
@@ -130,7 +187,7 @@ class Greet extends Component{
                         className="btn-lg btn-dark btn-block">Submit</Button>
                 </FormGroup>
                 <div className="text-center pt-3">
-                    I hope you are proud of yourself. :-| { this.state.dateIs }
+                    I hope you are proud of yourself. :-|
                 </div>
 
                 <Modal isOpen={this.state.modalIsOpen}>
@@ -142,7 +199,7 @@ class Greet extends Component{
                         Dropdown: { this.state.dropDownValue } <br/>
                         Select Value: { this.state.selectValue } <br/>
                         Multi Select: { this.state.multiValue } <br/>
-                        Date: { this.state.startDate }
+                        {/*Date: { this.state.startDate }*/}
 
                     </ModalBody>
                     <ModalFooter>Good day!</ModalFooter>
