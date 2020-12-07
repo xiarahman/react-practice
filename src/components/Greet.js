@@ -200,6 +200,7 @@ class Greet extends Component{
                         Select Value: { this.state.selectValue } <br/>
                         Multi Select: { this.state.multiValue } <br/>
                         {/*Date: { this.state.startDate }*/}
+                        Start Date: {this.state.startDate === null ? "" : this.state.startDate._d.toLocaleString()}<br/>
 
                     </ModalBody>
                     <ModalFooter>Good day!</ModalFooter>
